@@ -1,0 +1,359 @@
+/* ============================================
+   1. RESET / BASE
+   ============================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --color-primary: #7c5cff;
+  --color-primary-dark: #5a3ee6;
+  --color-accent: #00e5c7;
+  --color-pink: #ff6b9d;
+  --color-danger: #ff5b6a;
+  --color-success: #00d68f;
+  --color-warning: #ffd166;
+  --color-text: #f4f2ff;
+  --color-text-dark: #2d2a45;
+  --glass-bg: rgba(255, 255, 255, 0.10);
+  --glass-border: rgba(255, 255, 255, 0.22);
+  --radius: 20px;
+  --shadow: 0 18px 50px rgba(10, 5, 40, 0.45);
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+}
+
+/* ============================================
+   2. BODY + AURORA BACKGROUND
+   ============================================ */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--color-text);
+  min-height: 100vh;
+  background: linear-gradient(160deg, #14102e 0%, #241a54 45%, #101b3a 100%);
+  background-attachment: fixed;
+  padding: 28px 16px 60px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+.aurora { position: fixed; inset: 0; z-index: -2; overflow: hidden; }
+
+.blob {
+  position: absolute;
+  width: 55vmax; height: 55vmax;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.45;
+  animation: drift 22s ease-in-out infinite alternate;
+}
+.blob-1 { background: #7c5cff; top: -20%; left: -15%; }
+.blob-2 { background: #ff6b9d; bottom: -25%; right: -15%; animation-delay: -8s; animation-duration: 26s; }
+.blob-3 { background: #00e5c7; top: 30%; left: 40%; opacity: 0.28; animation-delay: -14s; animation-duration: 30s; }
+
+@keyframes drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(6vmax, -5vmax) scale(1.15); }
+}
+
+/* Floating sparkles (JS fills this layer) */
+.sparkles { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+.sparkle {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.55);
+  animation: twinkle var(--tw, 3s) ease-in-out infinite;
+  font-size: var(--fs, 12px);
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.8); }
+  50%      { opacity: 0.9;  transform: scale(1.2); }
+}
+
+/* ============================================
+   3. HEADER + MASCOT
+   ============================================ */
+.site-header { text-align: center; margin-bottom: 26px; position: relative; }
+
+.mascot { cursor: pointer; transition: transform 0.2s ease; filter: drop-shadow(0 8px 20px rgba(0,0,0,0.4)); }
+.mascot:hover { transform: scale(1.06) rotate(-3deg); }
+.mascot.wiggle { animation: wiggle 0.5s ease; }
+
+@keyframes wiggle {
+  0%,100% { transform: rotate(0); }
+  25% { transform: rotate(-8deg) scale(1.08); }
+  75% { transform: rotate(8deg) scale(1.08); }
+}
+
+.antenna-ball { animation: pulse-ball 1.6s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+@keyframes pulse-ball { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+.lid { animation: blink 4.2s infinite; transform-origin: center; transform-box: fill-box; }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(0); } 95% { transform: scaleY(1); } }
+
+.question-bubble { animation: bob 2.4s ease-in-out infinite alternate; }
+@keyframes bob { from { transform: translateY(0); } to { transform: translateY(-5px); } }
+
+.star { fill: #ffd166; color: #ffd166; animation: twinkle 2.5s ease-in-out infinite; }
+.star-2 { animation-delay: -1.2s; }
+
+.game-title {
+  font-size: clamp(2.2rem, 7vw, 4rem);
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #fff, #cdb9ff, #8affef, #fff);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shine 6s linear infinite;
+  filter: drop-shadow(0 6px 18px rgba(124, 92, 255, 0.5));
+}
+
+@keyframes shine { to { background-position: 300% 0; } }
+
+.tagline { margin-top: 6px; font-size: clamp(0.95rem, 2.5vw, 1.15rem); opacity: 0.9; min-height: 1.5em; }
+.cursor { animation: blink-cursor 0.9s step-end infinite; }
+@keyframes blink-cursor { 50% { opacity: 0; } }
+
+/* ============================================
+   4. GAME CONTAINER + GLASS CARDS
+   ============================================ */
+.game-container { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+
+.glass, .glass-strong {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.glass-strong { background: rgba(30, 22, 70, 0.82); padding: 36px 28px; }
+
+.stats-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 18px 22px; }
+.stat-box { display: flex; flex-direction: column; align-items: center; min-width: 86px; }
+.stat-label { font-size: 0.75rem; opacity: 0.75; text-transform: uppercase; letter-spacing: 1px; }
+.stat-value { font-size: 1.7rem; font-weight: 800; color: #fff; transition: transform 0.2s ease; }
+.stat-value.bump { animation: bump 0.35s ease; }
+@keyframes bump { 50% { transform: scale(1.45); color: var(--color-warning); } }
+
+/* Streak on fire! */
+#currentStreakBox.on-fire .stat-value {
+  background: linear-gradient(90deg, #ffd166, #ff6b35);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: fire-flicker 0.8s ease-in-out infinite alternate;
+}
+@keyframes fire-flicker { from { filter: drop-shadow(0 0 4px rgba(255,120,40,0.7)); } to { filter: drop-shadow(0 0 14px rgba(255,150,50,1)); } }
+
+/* ============================================
+   5. DIFFICULTY CARDS
+   ============================================ */
+.game-card { padding: 26px; }
+
+.section-label {
+  font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;
+  opacity: 0.7; margin-bottom: 12px;
+}
+
+.difficulty-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+
+.diff-card {
+  font-family: inherit; color: var(--color-text); cursor: pointer;
+  background: rgba(255,255,255,0.06);
+  border: 2px solid transparent; border-radius: 16px;
+  padding: 16px 10px; text-align: center;
+  display: flex; flex-direction: column; gap: 4px; align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.diff-card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.12); }
+.diff-card.active { border-color: var(--color-accent); background: rgba(0,229,199,0.12); box-shadow: 0 0 24px rgba(0,229,199,0.35); }
+
+.diff-emoji { font-size: 2rem; }
+.diff-name { font-weight: 800; font-size: 1.05rem; }
+.diff-meta { font-size: 0.72rem; opacity: 0.7; }
+
+/* ============================================
+   6. STATISTICS / INFO / ATTEMPT HEARTS
+   ============================================ */
+.info-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.info-chip {
+  background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border);
+  border-radius: 999px; padding: 8px 16px; font-size: 0.95rem;
+}
+
+.attempts-panel { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.attempts-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
+.attempt-hearts { display: flex; gap: 5px; font-size: 1.25rem; }
+.heart { transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease; display: inline-block; }
+.heart.lost { opacity: 0.25; filter: grayscale(1); transform: scale(0.8); }
+.heart.breaking { animation: heart-break 0.45s ease; }
+@keyframes heart-break {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.5) rotate(-12deg); }
+  100% { transform: scale(0.8); opacity: 0.25; filter: grayscale(1); }
+}
+
+/* ============================================
+   7. INPUT AREA
+   ============================================ */
+.guess-controls { display: flex; gap: 12px; }
+
+#guessInput {
+  flex: 1; font-size: 1.6rem; font-weight: 800; text-align: center;
+  color: #fff; background: rgba(0,0,0,0.25);
+  border: 2px solid var(--glass-border); border-radius: 14px;
+  padding: 14px; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#guessInput::placeholder { color: rgba(255,255,255,0.35); }
+#guessInput:focus {
+  border-color: var(--color-accent); outline: none;
+  box-shadow: 0 0 0 4px rgba(0,229,199,0.18), 0 0 20px rgba(0,229,199,0.25);
+}
+
+/* ============================================
+   8. BUTTONS
+   ============================================ */
+.btn {
+  font-size: 1rem; font-weight: 700; font-family: inherit;
+  border: none; border-radius: 14px; padding: 14px 22px;
+  cursor: pointer; color: var(--color-text-dark);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+.btn:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(0,0,0,0.35); }
+.btn:active { transform: translateY(0) scale(0.97); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.btn-primary { background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); color: #fff; }
+
+.btn-glow { animation: glow-btn 2s ease-in-out infinite alternate; }
+@keyframes glow-btn {
+  from { box-shadow: 0 0 12px rgba(124,92,255,0.5); }
+  to   { box-shadow: 0 0 28px rgba(124,92,255,0.9); }
+}
+
+.btn-ghost { background: rgba(255,255,255,0.12); color: var(--color-text); border: 1px solid var(--glass-border); }
+.btn-hint  { background: linear-gradient(135deg, #ffd166, #ffb347); color: #4a3200; }
+.btn-small { padding: 10px 16px; font-size: 0.85rem; }
+
+.action-row { display: flex; gap: 12px; margin-top: 14px; }
+.action-row .btn { flex: 1; }
+
+/* ============================================
+   9. FEEDBACK
+   ============================================ */
+.feedback-area {
+  margin-top: 20px; padding: 18px; border-radius: 16px;
+  background: rgba(0,0,0,0.22); border: 1px solid var(--glass-border);
+  text-align: center; min-height: 96px;
+  display: flex; flex-direction: column; justify-content: center; gap: 6px;
+}
+.feedback-message { font-size: 1.15rem; font-weight: 600; }
+.feedback-area.success { background: rgba(0, 214, 143, 0.15); border-color: rgba(0,214,143,0.5); color: #8affd6; }
+.feedback-area.error   { background: rgba(255, 91, 106, 0.15); border-color: rgba(255,91,106,0.5); color: #ffb3bb; }
+.temperature-display { font-size: 1.35rem; font-weight: 800; min-height: 1.5em; }
+
+.hint-text { margin-top: 10px; text-align: center; color: var(--color-warning); font-weight: 600; min-height: 1.4em; }
+
+/* ============================================
+   10. HISTORY
+   ============================================ */
+.history-card { padding: 24px; }
+.history-card h2 { font-size: 1.15rem; margin-bottom: 14px; }
+.history-list { display: flex; flex-direction: column; gap: 8px; }
+.history-empty { opacity: 0.6; text-align: center; font-style: italic; }
+
+.history-row {
+  display: grid; grid-template-columns: 46px 1fr 1fr 1fr; gap: 8px; align-items: center;
+  background: rgba(255,255,255,0.07); border: 1px solid var(--glass-border);
+  border-radius: 12px; padding: 10px 14px; font-size: 0.95rem;
+  animation: slide-in 0.35s ease;
+}
+@keyframes slide-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+.history-row .attempt-num { opacity: 0.6; font-weight: 700; }
+.history-row .guess-value { font-weight: 800; font-size: 1.15rem; color: var(--color-accent); }
+.direction-high { color: #ff8fa0; font-weight: 600; }
+.direction-low  { color: #7cc7ff; font-weight: 600; }
+.direction-correct { color: #8affd6; font-weight: 800; }
+
+/* ============================================
+   11. RESULT MODAL
+   ============================================ */
+.result-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(8, 4, 28, 0.65);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; animation: fade-in 0.3s ease;
+}
+.result-overlay.hidden { display: none; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.result-card {
+  max-width: 420px; width: 100%; text-align: center;
+  animation: pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes pop-in { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: scale(1); } }
+
+.result-emoji { font-size: 4.5rem; animation: bounce 0.7s ease infinite alternate; filter: drop-shadow(0 6px 16px rgba(0,0,0,0.4)); }
+@keyframes bounce { from { transform: translateY(0) rotate(-4deg); } to { transform: translateY(-12px) rotate(4deg); } }
+
+.result-card h2 { font-size: 2rem; margin: 10px 0 6px; }
+.result-secret, .result-score { font-size: 1.1rem; margin: 8px 0; opacity: 0.95; }
+.result-score strong { font-size: 1.7rem; color: var(--color-warning); }
+.result-card .btn { margin-top: 16px; }
+
+.result-card.win { border-color: rgba(0,214,143,0.6); box-shadow: 0 0 40px rgba(0,214,143,0.35), var(--shadow); }
+.result-card.lose { border-color: rgba(255,91,106,0.5); }
+.result-card.lose .result-emoji { animation: none; }
+
+/* ============================================
+   12. ANIMATIONS (feedback + errors)
+   ============================================ */
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%,60% { transform: translateX(-9px); }
+  40%,80% { transform: translateX(9px); }
+}
+.shake { animation: shake 0.4s ease; border-color: var(--color-danger) !important; }
+
+@keyframes pop { from { transform: scale(0.92); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
+.pop { animation: pop 0.3s ease; }
+
+/* ============================================
+   13. 🌸 FLOWER PETAL RAIN (the win celebration!)
+   JS creates .petal elements with random inline
+   CSS variables; this keyframe makes them fall
+   while swaying and spinning like real petals.
+   ============================================ */
+.petal {
+  position: fixed; top: -50px; z-index: 999;
+  pointer-events: none; user-select: none;
+  font-size: var(--size, 22px);
+  animation: petal-fall var(--dur, 4s) linear var(--delay, 0s) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes petal-fall {
+  0%   { transform: translate3d(0, -5vh, 0) rotate(0deg);        opacity: 1; }
+  25%  { transform: translate3d(var(--sway), 22vh, 0) rotate(100deg); }
+  50%  { transform: translate3d(calc(var(--sway) * -1), 48vh, 0) rotate(200deg); }
+  75%  { transform: translate3d(var(--sway), 76vh, 0) rotate(300deg); opacity: 0.95; }
+  100% { transform: translate3d(0, 108vh, 0) rotate(400deg);      opacity: 0.6; }
+}
+
+/* ============================================
+   14. RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 560px) {
+  body { padding: 16px 10px 44px; }
+  .glass, .glass-strong { padding: 18px; }
+  .difficulty-cards { grid-template-columns: 1fr; }
+  .diff-card { flex-direction: row; justify-content: flex-start; padding: 12px 16px; }
+  .diff-emoji { font-size: 1.6rem; }
+  .guess-controls { flex-direction: column; }
+  .stats-bar { justify-content: center; }
+  .history-row { grid-template-columns: 36px 1fr 1fr; }
+  .history-row .temp-cell { display: none; }
+  .mascot { width: 84px; height: 84px; }
+}

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MindGuess Bloom Edition — a stunning number guessing game built with pure HTML, CSS and Vanilla JavaScript." />
+  <title>MindGuess — The Number Challenge 🌸</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== Animated aurora background ===== -->
+  <div class="aurora" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+  </div>
+
+  <!-- ===== Floating background sparkles ===== -->
+  <div class="sparkles" aria-hidden="true" id="sparkleLayer"></div>
+
+  <!-- ================= HEADER ================= -->
+  <header class="site-header">
+    <!-- Hand-made SVG mascot (an inline "image" — no external file!) -->
+    <svg id="mascot" class="mascot" viewBox="0 0 120 120" width="110" height="110" role="img" aria-label="MindGuess robot mascot">
+      <circle cx="60" cy="60" r="52" fill="#f8f4ff" opacity="0.15"/>
+      <!-- antenna -->
+      <line x1="60" y1="22" x2="60" y2="38" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+      <circle class="antenna-ball" cx="60" cy="18" r="6" fill="#ffd166"/>
+      <!-- head -->
+      <rect x="30" y="38" width="60" height="48" rx="14" fill="#ffffff"/>
+      <!-- eyes -->
+      <circle class="eye" cx="48" cy="58" r="6" fill="#2d3436"/>
+      <circle class="eye" cx="72" cy="58" r="6" fill="#2d3436"/>
+      <!-- blink lids -->
+      <rect class="lid" x="40" y="50" width="16" height="16" rx="8" fill="#ffffff"/>
+      <rect class="lid" x="64" y="50" width="16" height="16" rx="8" fill="#ffffff"/>
+      <!-- smile -->
+      <path d="M48 72 Q60 80 72 72" stroke="#2d3436" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <!-- question bubble -->
+      <g class="question-bubble">
+        <circle cx="96" cy="30" r="14" fill="#ffd166"/>
+        <text x="96" y="36" text-anchor="middle" font-size="18" font-weight="bold" fill="#2d3436">?</text>
+      </g>
+      <!-- stars -->
+      <text class="star star-1" x="14" y="30" font-size="14">✦</text>
+      <text class="star star-2" x="100" y="88" font-size="12">✦</text>
+    </svg>
+
+    <h1 class="game-title">🧠 MindGuess</h1>
+    <p class="tagline"><span id="typewriter"></span><span class="cursor">|</span></p>
+  </header>
+
+  <!-- ================= MAIN ================= -->
+  <main class="game-container">
+
+    <!-- Statistics bar -->
+    <section class="stats-bar glass" aria-label="Player statistics">
+      <div class="stat-box">
+        <span class="stat-label">🏆 Best Score</span>
+        <span class="stat-value" id="bestScoreDisplay">0</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">⚡ Best Streak</span>
+        <span class="stat-value" id="bestStreakDisplay">0</span>
+      </div>
+      <div class="stat-box" id="currentStreakBox">
+        <span class="stat-label">Streak</span>
+        <span class="stat-value" id="currentStreakDisplay">0</span>
+      </div>
+      <button id="resetStatsButton" class="btn btn-small btn-ghost" type="button">
+        🗑️ Reset
+      </button>
+    </section>
+
+    <!-- Game card -->
+    <section class="game-card glass" aria-label="Game area">
+
+      <!-- Difficulty cards -->
+      <h2 class="section-label">Choose your challenge</h2>
+      <div class="difficulty-cards" role="group" aria-label="Difficulty selection">
+        <button class="diff-card diff-easy" data-difficulty="easy" type="button">
+          <span class="diff-emoji">🐣</span>
+          <span class="diff-name">Easy</span>
+          <span class="diff-meta">1–50 · 10 tries · 3 hints</span>
+        </button>
+        <button class="diff-card diff-medium" data-difficulty="medium" type="button">
+          <span class="diff-emoji">🦊</span>
+          <span class="diff-name">Medium</span>
+          <span class="diff-meta">1–100 · 8 tries · 2 hints</span>
+        </button>
+        <button class="diff-card diff-hard" data-difficulty="hard" type="button">
+          <span class="diff-emoji">🐉</span>
+          <span class="diff-name">Hard</span>
+          <span class="diff-meta">1–500 · 7 tries · 1 hint</span>
+        </button>
+      </div>
+
+      <!-- Info row -->
+      <div class="info-row">
+        <div class="info-chip">🔢 <strong id="rangeDisplay">1 – 50</strong></div>
+        <div class="info-chip">⏱️ <strong id="timerDisplay">00:00</strong></div>
+        <div class="info-chip">💡 <strong id="hintsDisplay">3</strong></div>
+      </div>
+
+      <!-- Attempts as hearts -->
+      <div class="attempts-panel">
+        <span class="attempts-label">Attempts</span>
+        <div id="attemptsHearts" class="attempt-hearts" aria-label="Attempts remaining"></div>
+      </div>
+
+      <!-- Guess area -->
+      <form id="guessForm" class="guess-area">
+        <label class="sr-only" for="guessInput">Enter your guess</label>
+        <div class="guess-controls">
+          <input type="number" id="guessInput" min="1" max="50" placeholder="?" autocomplete="off" />
+          <button type="submit" id="guessButton" class="btn btn-primary btn-glow">Guess 🚀</button>
+        </div>
+      </form>
+
+      <!-- Actions -->
+      <div class="action-row">
+        <button id="hintButton" class="btn btn-hint" type="button">💡 Hint</button>
+        <button id="newGameButton" class="btn btn-ghost" type="button">🔄 New Game</button>
+      </div>
+
+      <!-- Feedback -->
+      <div id="feedbackArea" class="feedback-area" aria-live="polite">
+        <p id="feedbackMessage" class="feedback-message">I'm thinking of a number…</p>
+        <p id="temperatureDisplay" class="temperature-display"></p>
+      </div>
+      <p id="hintText" class="hint-text" aria-live="polite"></p>
+    </section>
+
+    <!-- History -->
+    <section class="history-card glass" aria-label="Guess history">
+      <h2>📜 Guess History</h2>
+      <div id="historyList" class="history-list">
+        <p class="history-empty">No guesses yet. Good luck! 🍀</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="site-footer">
+    <p>Made with ❤️ · HTML5 + CSS3 + Vanilla JS · 🌸 Bloom Edition</p>
+  </footer>
+
+  <!-- ================= RESULT MODAL ================= -->
+  <div id="resultOverlay" class="result-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+    <div id="resultCard" class="result-card glass-strong">
+      <div id="resultEmoji" class="result-emoji">🎉</div>
+      <h2 id="resultTitle">You Win!</h2>
+      <p id="resultMessage"></p>
+      <p class="result-secret">The secret number was <strong id="resultSecret">?</strong></p>
+      <p class="result-score">Score: <strong id="resultScore">0</strong></p>
+      <button id="playAgainButton" class="btn btn-primary btn-glow" type="button">▶ Play Again</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
